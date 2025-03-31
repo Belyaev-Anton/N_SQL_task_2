@@ -1,0 +1,114 @@
+CREATE TABLE IF NOT EXISTS Performer (
+		id_performer SERIAL PRIMARY KEY, 
+		name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Genres (
+		id_genres SERIAL PRIMARY KEY, 
+		name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Album (
+		id_album SERIAL PRIMARY KEY, 
+		name VARCHAR(255) NOT null,
+		year_of_release date not null check (year_of_release::date > '1999-12-31')
+);
+
+CREATE TABLE IF NOT EXISTS Track (
+	  id_track SERIAL PRIMARY KEY, 
+	  name VARCHAR(255) NOT null,
+	  length DECIMAL(3, 2)  not null check (length > 04.00),
+	  id_album INT NOT null
+);
+
+CREATE TABLE IF NOT EXISTS Collection (
+	  id_collection SERIAL PRIMARY KEY, 
+	  name VARCHAR(255) NOT null,
+	  year_of_release date not null check (year_of_release::date > '1999-12-31')
+) ;
+
+CREATE TABLE IF NOT EXISTS S_Perfomer_Genres (
+		id_perfomer_genres SERIAL PRIMARY KEY, 
+		id_performer INT NOT null,
+		id_genres INT NOT null,
+	  
+		FOREIGN KEY(id_performer)	REFERENCES performer(id_performer)	ON DELETE CASCADE,
+		FOREIGN KEY(id_genres)	REFERENCES Genres(id_genres)	ON DELETE CASCADE
+) ;
+
+CREATE TABLE IF NOT EXISTS S_Performer_Album (
+		id_Perfomer_Album SERIAL PRIMARY KEY, 
+		id_performer INT NOT null,
+		id_album INT NOT null,
+	  
+		FOREIGN KEY(id_performer)	REFERENCES performer(id_performer)	ON DELETE CASCADE,
+		FOREIGN KEY(id_album)	REFERENCES Album(id_album)	ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS S_Collection_Track (
+	  	id_collection_track SERIAL PRIMARY KEY, 
+	  	id_collection INT NOT null,
+	  	id_track INT NOT null,
+	  	
+		FOREIGN KEY(id_collection)	REFERENCES Collection(id_collection)	ON DELETE CASCADE,
+		FOREIGN KEY(id_track)	REFERENCES Track(id_track)	ON DELETE CASCADE
+);
+
+
+
+-- /* Вставка значений
+
+INSERT INTO Performer (name) 
+VALUES ('Баста'), ('Ария'), ('КИШ'), ('Ленинград'), ('Бах');
+
+INSERT INTO Genres (name) 
+VALUES ('Рок'), ('Рэп'), ('Попса'), ('Класика');
+
+INSERT INTO Album (name,year_of_release) 
+VALUES ('Баста 1','2021-01-01'),('Баста 2','2022-01-01'),('Киш-1','2001-01-01'),('Ария-1','2004-10-01'),('Ленинград-1','2005-10-01'),('Бах-1','2000-10-01');
+
+INSERT INTO Track (name,length,id_album) 
+VALUES ('Свобода',04.19,1),('Свобода-2',05.19,2),('Лесник',04.01,3),('Колизей',06.20,4),('WWW',04.20,5),('Что то там ...',05.20,6);
+
+INSERT INTO collection (name,year_of_release) 
+VALUES ('Сборник-1','2021-01-01'),('Сборник-2','2022-01-01');
+
+INSERT INTO S_Perfomer_Genres (id_performer,id_genres) 
+VALUES (1,2), (2,1), (3,1), (4,1), (5,4);
+
+INSERT INTO S_Performer_Album (id_performer,id_album)
+VALUES (1,1), (1,2), (3,3), (2,4), (4,5),(5,6);
+
+INSERT INTO S_Collection_Track (id_collection, id_track) 
+VALUES (1,1), (1,2), (1,3), (2,4), (2,5),(2,6);
+
+-- */ Вставка значений
+
+
+
+
+-- /*Проверка исключений
+INSERT INTO Album (name,year_of_release) 
+values ('Баста 2','1999-12-31');					--Год выпуска альбома > 1999-12-31 
+
+INSERT INTO collection (name,year_of_release) 	
+VALUES ('Сборник-1','2021-01-01'),('Сборник-2','1999-12-31');		--Год выпуска сборника > 1999-12-31 
+
+INSERT INTO Track (name,length,id_album) 
+VALUES ('Свобода',03.19,6);						--длина трека > 04.00
+-- */Проверка исключений
+
+
+
+DELETE FROM Performer WHERE id_performer = 1;		-- ОР в таблицах: Performer, ОР S_Perfomer_Genres, S_Performer_Album - удаляются строки со значением id_performer = заданному значению 
+DELETE FROM Genres WHERE id_genres = 1;			-- ОР в таблицах: Genres, S_Perfomer_Genres - удаляются строки со значением id_genres = заданному значению 
+
+
+select * from Performer;
+select * from Genres;
+select * from Album;
+select * from Track;
+select * from collection;
+select * from S_Perfomer_Genres;
+select * from S_Performer_Album;
+select * from S_Collection_Track;

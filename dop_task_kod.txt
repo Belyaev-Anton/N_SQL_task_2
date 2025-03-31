@@ -1,0 +1,64 @@
+CREATE TABLE IF NOT EXISTS department 
+(
+  	id_department SERIAL PRIMARY KEY, 
+  	name VARCHAR(100) NOT null
+);
+
+CREATE TABLE IF NOT EXISTS employee 
+(
+  	id_employee SERIAL PRIMARY KEY,
+  	name VARCHAR(100) NOT null,
+  	id_department INT DEFAULT NULL
+);  	
+
+CREATE TABLE IF NOT EXISTS leader 
+(
+  	id_leader SERIAL PRIMARY KEY,
+	id_department INT DEFAULT NULL,
+  	id_employee INT DEFAULT NULL,
+  
+	FOREIGN KEY(id_employee)	REFERENCES employee(id_employee)	ON DELETE CASCADE,
+	FOREIGN KEY(id_department)	REFERENCES department(id_department)	ON DELETE CASCADE
+);
+
+
+INSERT INTO employee (name, id_department) 
+VALUES ('Андрей',1), ('Алексей',1), ('Роман',2), ('Анатолий',2), ('Барсук',1), ('Конь',2);
+
+INSERT INTO department (name) 
+VALUES ('Логистика'), ('Бухгалтерия');
+
+INSERT INTO leader (id_employee,id_department) 
+VALUES (5,1), (6,2);
+
+
+select * from department;
+select * from employee;
+select * from leader ;
+
+
+--	Результирущий запрос
+select e."name" as "Сотрудник", d."name" as "Департамент", x."name" as "Начальник" from employee e
+left join department d on e.id_department  = d.id_department
+left join leader l on l.id_department = d.id_department
+left join employee x on x.id_employee = l.id_employee
+order by e.id_employee 
+
+
+
+
+--/* Проверка ON DELETE CASCADE	
+		
+	--	ОР в таблице employee удалится строка с значением указанным id_employee 
+	--	ОР в таблице leader удалится значение id_employee	
+	--	ОР в результируезем запросе значение "Начальник"
+	DELETE FROM employee WHERE id_employee =6;	
+					
+	--	ОР в таблице department удалится строка с значением указанным id_department
+	--	ОР в таблице leader удалится значение id_department
+	--	ОР В результируезем запросе удалится значение "Департамент" и "Начальник"
+	DELETE FROM department WHERE id_department =1;	
+
+--**/ Проверка ON DELETE CASCADE	
+	
+
