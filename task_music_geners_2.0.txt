@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS Track (
 	  id_track SERIAL PRIMARY KEY, 
 	  name VARCHAR(255) NOT null,
 	  length DECIMAL(3, 2)  not null check (length > 04.00),
-	  id_album INT NOT null
+	  id_album INT NOT null,
+	  FOREIGN KEY(id_album)	REFERENCES album(id_album)	ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Collection (
@@ -102,7 +103,7 @@ VALUES ('Свобода',03.19,6);						--длина трека > 04.00
 
 DELETE FROM Performer WHERE id_performer = 1;		-- ОР в таблицах: Performer, ОР S_Perfomer_Genres, S_Performer_Album - удаляются строки со значением id_performer = заданному значению 
 DELETE FROM Genres WHERE id_genres = 1;			-- ОР в таблицах: Genres, S_Perfomer_Genres - удаляются строки со значением id_genres = заданному значению 
-
+DELETE FROM album  WHERE id_album = 1;	
 
 select * from Performer;
 select * from Genres;
